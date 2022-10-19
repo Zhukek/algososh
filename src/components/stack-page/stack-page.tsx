@@ -1,4 +1,4 @@
-import React, { SyntheticEvent, useState } from "react";
+import React, { SyntheticEvent, useRef, useState } from "react";
 import { ElementStates } from "../../types/element-states";
 import { Button } from "../ui/button/button";
 import { Circle } from "../ui/circle/circle";
@@ -6,6 +6,7 @@ import { Input } from "../ui/input/input";
 import { SolutionLayout } from "../ui/solution-layout/solution-layout";
 import timeout from "../../services/timeout";
 import styles from './styles.module.css';
+import {Stack} from './stack';
 
 type TArrItem = {
   text: string;
@@ -14,7 +15,9 @@ type TArrItem = {
 
 export const StackPage: React.FC = () => {
   const [value, setValue] = useState('');
-  const [stack, setStack] = useState<TArrItem[]>([]);
+  const newStack = new Stack<TArrItem>();
+  const stack = useRef(newStack).current;
+  const [stackValues, setStack] = useState<TArrItem[]>([]);
   const [loading, setLoading] = useState(false);
 
   const onChange = (e: SyntheticEvent) => {
@@ -27,35 +30,38 @@ export const StackPage: React.FC = () => {
       return
     }
     setLoading(true);
-    let arr = [...stack];
+
+
+    let arr = [...stack.getItems()];
     arr.push({
       text: value,
       state: ElementStates.Changing
     });
-    setValue('');
     setStack([...arr]);
     await timeout(500);
-    (arr.at(-1) as TArrItem).state = ElementStates.Default;
-    setStack([...arr]);
+    stack.push({text: value, state: ElementStates.Default});
+    setStack([...stack.getItems()]);
+    setValue('');
     setLoading(false);
   }
 
   const pop = async () => {
-    if (stack.length === 0) {
+    if (stack.getSize() === 0) {
       return
     }
     setLoading(true);
-    let arr = [...stack];
+    let arr = [...stack.getItems()];
     (arr.at(-1) as TArrItem).state = ElementStates.Changing;
     setStack([...arr]);
     await timeout(500);
-    arr.pop()
-    setStack([...arr]);
+    stack.pop();
+    setStack([...stack.getItems()]);
     setLoading(false);
   }
 
   const clearAll = () => {
-    setStack([]);
+    stack.clear();
+    setStack([...stack.getItems()]);
   }
 
   return (
@@ -68,8 +74,8 @@ export const StackPage: React.FC = () => {
       </form>
       <ul className={styles.result}>
       {
-        stack.map((item, index) => (
-          <Circle state={item.state} letter={item.text} key={index} index={index} head={index === stack.length - 1 ? 'top' : ''}/>
+        stackValues.map((item, index) => (
+          <Circle state={item.state} letter={item.text} key={index} index={index} head={index === stackValues.length - 1 ? 'top' : ''}/>
         ))
       }
       </ul>

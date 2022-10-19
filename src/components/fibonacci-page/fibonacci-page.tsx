@@ -18,21 +18,28 @@ export const FibonacciPage: React.FC = () => {
   const onSubmit =async (e:SyntheticEvent) => {
     e.preventDefault();
     setLoading(true);
-    let arr: number[] = [1];
-    setArray(arr)
-    for (let i = 1; i <= value; i++) {
+    setArray([])
+    const arr = getFibonacciNumbers(value);
+    for (let i = 0; i < arr.length; i++) {
       await timeout(500)
+      setArray(v => [...v,arr[i]])
+    }
+    
+
+    setLoading(false);
+  }
+
+  const getFibonacciNumbers = (num: number) => {
+    let arr: number[] = [1];
+    for (let i = 1; i <= num; i++) {
       if (i === 1) {
         arr.push(1)
       } else {
         const nextNumber = arr[i - 2] + arr[i - 1]
         arr.push(nextNumber)
       }
-      setArray([...arr])
     }
-    
-
-    setLoading(false);
+    return arr
   }
 
   return (
