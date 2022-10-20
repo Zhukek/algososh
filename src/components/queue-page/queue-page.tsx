@@ -20,14 +20,14 @@ export const QueuePage: React.FC = () => {
   });
   const queue = useRef(newQueue).current;
   const [value, setValue] = useState('');
-  const [queueValues, setQueue] = useState<TQueueItem[]>([...newQueue.getElements()]);
+  const [queueValues, setQueue] = useState<TQueueItem[]>([...queue.getElements()]);
   const [loading, setLoading] = useState(false);
 
-  const onChange = (e: SyntheticEvent) => {
-    setValue((e.target as HTMLInputElement).value)
+  const onChange: React.ChangeEventHandler<HTMLInputElement> = (e) => {
+    setValue(e.currentTarget.value)
   }
 
-  const onSubmit = async (e:SyntheticEvent) => {
+  const onSubmit: React.FormEventHandler<HTMLFormElement> = async (e) => {
     e.preventDefault();
     if(!queue.hasFreePlace() || value === '') {
       return
@@ -60,9 +60,9 @@ export const QueuePage: React.FC = () => {
     <SolutionLayout title="Очередь">
       <form onSubmit={onSubmit} className={styles.contols}>
         <Input disabled={loading} type="text" isLimitText={true} value={value} onChange={onChange} maxLength={4}/>
-        <Button disabled={loading} type={'submit'} text="Добавить"/>
-        <Button disabled={loading} onClick={dequeue} type={'button'} text="Удалить"/>
-        <Button disabled={loading} onClick={clearAll} type={'button'} text="Очистить"/>
+        <Button isLoader={loading} disabled={loading || value === '' || !queue.hasFreePlace()} type={'submit'} text="Добавить"/>
+        <Button disabled={loading || queue.isEmpty()} onClick={dequeue} type={'button'} text="Удалить"/>
+        <Button disabled={loading || queue.isEmpty()} onClick={clearAll} type={'button'} text="Очистить"/>
       </form>
       <ul className={styles.result}>
       {

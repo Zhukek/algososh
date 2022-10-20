@@ -19,19 +19,19 @@ export const StackPage: React.FC = () => {
   const stack = useRef(newStack).current;
   const [stackValues, setStack] = useState<TArrItem[]>([]);
   const [loading, setLoading] = useState(false);
+  const [action, setAction] = useState('');
 
-  const onChange = (e: SyntheticEvent) => {
-    setValue((e.target as HTMLInputElement).value)
+  const onChange: React.ChangeEventHandler<HTMLInputElement> = (e) => {
+    setValue(e.currentTarget.value)
   }
 
-  const onSubmit = async (e: SyntheticEvent) => {
+  const onSubmit: React.FormEventHandler<HTMLFormElement> = async (e) => {
     e.preventDefault();
     if (loading || value === '') {
       return
     }
     setLoading(true);
-
-
+    setAction('add');
     let arr = [...stack.getItems()];
     arr.push({
       text: value,
@@ -43,6 +43,7 @@ export const StackPage: React.FC = () => {
     setStack([...stack.getItems()]);
     setValue('');
     setLoading(false);
+    setAction('');
   }
 
   const pop = async () => {
@@ -50,6 +51,7 @@ export const StackPage: React.FC = () => {
       return
     }
     setLoading(true);
+    setAction('pop');
     let arr = [...stack.getItems()];
     (arr.at(-1) as TArrItem).state = ElementStates.Changing;
     setStack([...arr]);
@@ -57,6 +59,7 @@ export const StackPage: React.FC = () => {
     stack.pop();
     setStack([...stack.getItems()]);
     setLoading(false);
+    setAction('');
   }
 
   const clearAll = () => {
@@ -68,9 +71,9 @@ export const StackPage: React.FC = () => {
     <SolutionLayout title="Стек">
       <form onSubmit={onSubmit} className={styles.contols}>
         <Input type="text" isLimitText={true} value={value} onChange={onChange} maxLength={4}/>
-        <Button disabled={loading} type={'submit'} text="Добавить"/>
-        <Button disabled={loading} onClick={pop} type={'button'} text="Удалить"/>
-        <Button disabled={loading} onClick={clearAll} type={'button'} text="Очистить"/>
+        <Button isLoader={action === 'add'} disabled={loading || value === ''} type={'submit'} text="Добавить"/>
+        <Button isLoader={action === 'pop'} disabled={loading || stack.getSize() === 0} onClick={pop} type={'button'} text="Удалить"/>
+        <Button disabled={loading || stack.getSize() === 0} onClick={clearAll} type={'button'} text="Очистить"/>
       </form>
       <ul className={styles.result}>
       {

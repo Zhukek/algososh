@@ -17,11 +17,11 @@ export const StringComponent: React.FC = () => {
   const [array, setArray] = useState<TLetter[]>([]);
   const [loading, setLoading] = useState(false)
 
-  const onChange = (e: SyntheticEvent) => {
-    setValue((e.target as HTMLInputElement).value)
+  const onChange: React.ChangeEventHandler<HTMLInputElement> = (e) => {
+    setValue(e.currentTarget.value)
   }
 
-  const onSubmit =async (e:SyntheticEvent) => {
+  const onSubmit: React.FormEventHandler<HTMLFormElement> = async (e) => {
     e.preventDefault();
     setLoading(true)
     let newArr = value.split('').map(letter => ({
@@ -55,7 +55,7 @@ export const StringComponent: React.FC = () => {
     <SolutionLayout title="Строка">
       <form onSubmit={onSubmit} className={styles.wrapper}>
         <Input maxLength={11} type="text" value={value} onChange={onChange}/>
-        <Button isLoader={loading} type={'submit'} text={'Развернуть'}/>
+        <Button disabled={value === ''} isLoader={loading} type={'submit'} text={'Развернуть'}/>
         <p className={styles.sign}>Максимум — 11 символов</p>
       </form>
       <div className={styles.solution}>

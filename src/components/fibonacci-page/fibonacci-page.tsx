@@ -11,11 +11,11 @@ export const FibonacciPage: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [array, setArray] = useState<number[]>([])
 
-  const onChange = (e: SyntheticEvent) => {
-    setValue(Number((e.target as HTMLInputElement).value))
+  const onChange: React.ChangeEventHandler<HTMLInputElement> = (e) => {
+    setValue(Number(e.currentTarget.value))
   }
 
-  const onSubmit =async (e:SyntheticEvent) => {
+  const onSubmit: React.FormEventHandler<HTMLFormElement> =async (e) => {
     e.preventDefault();
     setLoading(true);
     setArray([])
@@ -30,7 +30,7 @@ export const FibonacciPage: React.FC = () => {
   }
 
   const getFibonacciNumbers = (num: number) => {
-    let arr: number[] = [1];
+    const arr: number[] = [1];
     for (let i = 1; i <= num; i++) {
       if (i === 1) {
         arr.push(1)
@@ -46,7 +46,7 @@ export const FibonacciPage: React.FC = () => {
     <SolutionLayout title="Последовательность Фибоначчи">
       <form onSubmit={onSubmit} className={styles.wrapper}>
         <Input max={19} type="number" value={value} onChange={onChange}/>
-        <Button isLoader={loading} type={'submit'} text={'Развернуть'}/>
+        <Button disabled={value === 0 || value > 19} isLoader={loading} type={'submit'} text={'Развернуть'}/>
         <p className={styles.sign}>Максимальное число — 19</p>
       </form>
       <div className={styles.solution}>

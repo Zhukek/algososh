@@ -25,15 +25,16 @@ export const ListPage: React.FC = () => {
   const [value, setTextValue] = useState('');
   const [index, setIndex] = useState('');
   const [loading, setLoading] = useState(false);
-  const [array, setArray] = useState([...list.toArray()])
+  const [array, setArray] = useState([...list.toArray()]);
+  const [action, setAction] = useState('');
 
-  const onChange = (e: SyntheticEvent) => {
-    switch((e.target as HTMLInputElement).id) {
+  const onChange: React.ChangeEventHandler<HTMLInputElement> = (e) => {
+    switch(e.currentTarget.id) {
       case 'text':
-        setTextValue((e.target as HTMLInputElement).value)
+        setTextValue(e.currentTarget.value)
       break;
       case 'index':
-        setIndex((e.target as HTMLInputElement).value)
+        setIndex(e.currentTarget.value)
       break;
       default:
         return
@@ -49,6 +50,7 @@ export const ListPage: React.FC = () => {
       return
     }
     setLoading(true);
+    setAction('prepend');
     let arr = returnArray();
     if (arr.length > 0) {
       arr[0].head = value;
@@ -63,6 +65,7 @@ export const ListPage: React.FC = () => {
     setArray([...list.toArray()]);
     setTextValue('');
     setLoading(false);
+    setAction('');
   }
 
   const append = async () => {
@@ -70,6 +73,7 @@ export const ListPage: React.FC = () => {
       return
     }
     setLoading(true);
+    setAction('append');
     let arr = returnArray();
     if (arr.length > 0) {
       arr.at(-1)!.head = value;
@@ -84,10 +88,12 @@ export const ListPage: React.FC = () => {
     setArray([...list.toArray()]);
     setTextValue('');
     setLoading(false);
+    setAction('');
   }
 
   const deleteHead = async () => {
     setLoading(true);
+    setAction('deleteHead');
     let arr = returnArray();
     if (arr.length > 0) {
       arr[0].tail = arr[0].value;
@@ -99,10 +105,12 @@ export const ListPage: React.FC = () => {
       setTextValue('');
     }
     setLoading(false);
+    setAction('');
   }
 
   const deleteTail = async () => {
     setLoading(true);
+    setAction('deleteTail');
     let arr = returnArray();
     if (arr.length > 0) {
       arr.at(-1)!.tail = arr.at(-1)!.value;
@@ -114,6 +122,7 @@ export const ListPage: React.FC = () => {
       setTextValue('');
     }
     setLoading(false);
+    setAction('');
   }
 
   const deleteByIndex = async () => {
@@ -121,6 +130,7 @@ export const ListPage: React.FC = () => {
       return
     }
     setLoading(true);
+    setAction('deleteByIndex');
     let arr = returnArray();
     const num = Number(index);
     const size = list.getSize();
@@ -139,6 +149,7 @@ export const ListPage: React.FC = () => {
       setIndex('');
     }
     setLoading(false);
+    setAction('');
   }
 
   const addByIndex = async () => {
@@ -152,6 +163,7 @@ export const ListPage: React.FC = () => {
       return
     }
     setLoading(true);
+    setAction('addByIndex');
     let arr = returnArray();
     
     if (size > 0 && num >= 0 && num < size) {
@@ -174,19 +186,24 @@ export const ListPage: React.FC = () => {
       setTextValue('')
     }
     setLoading(false);
+    setAction('');
   }
 
   return (
     <SolutionLayout title="Связный список">
       <div className={styles.controll}>
         <Input disabled={loading} type="text" isLimitText={true} value={value} id='text' onChange={onChange} maxLength={4}/>
-        <Button onClick={prepend} disabled={loading} text="Добавить в head"/>
-        <Button onClick={append} disabled={loading} text="Добавить в tail"/>
-        <Button onClick={deleteHead} disabled={loading} text="Удалить из head"/>
-        <Button onClick={deleteTail} disabled={loading} text="Удалить из tail"/>
+        <Button isLoader={action === 'prepend'} onClick={prepend} disabled={loading || value === ''} text="Добавить в head"/>
+        <Button isLoader={action === 'append'} onClick={append} disabled={loading || value === ''} text="Добавить в tail"/>
+        <Button isLoader={action === 'deleteHead'} onClick={deleteHead} disabled={loading || array.length === 0} text="Удалить из head"/>
+        <Button isLoader={action === 'deleteTail'} onClick={deleteTail} disabled={loading || array.length === 0} text="Удалить из tail"/>
         <Input disabled={loading} type="number" id="index" value={index} onChange={onChange}/>
-        <Button onClick={addByIndex} disabled={loading} extraClass={styles.longButton_left} text="Добавить по индексу"/>
-        <Button onClick={deleteByIndex} disabled={loading} extraClass={styles.longButton_right} text="Удалить по индексу"/>
+        <Button isLoader={action === 'addByIndex'} onClick={addByIndex} disabled={
+          loading || value === '' || index === '' || Number(index) < 0 || Number(index) > array.length
+        } extraClass={styles.longButton_left} text="Добавить по индексу"/>
+        <Button isLoader={action === 'deleteByIndex'} onClick={deleteByIndex} disabled={
+            loading || index === '' || array.length === 0 || Number(index) < 0 || Number(index) >= array.length
+          } extraClass={styles.longButton_right} text="Удалить по индексу"/>
       </div>
       <div className={styles.solution}>
         {

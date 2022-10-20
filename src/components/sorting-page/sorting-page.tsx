@@ -17,13 +17,14 @@ export const SortingPage: React.FC = () => {
   const [sortType, setSortType] = useState('select');
   const [array, setArray] = useState<TArrItem[]>([]);
   const [loading, setLoading] = useState(false);
+  const [type, setType] = useState('');
 
   useEffect(() => {
     generateArr();
   },[])
 
-  const onChange = (e: SyntheticEvent) => {
-    setSortType((e.target as HTMLInputElement).value);
+  const onChange: React.ChangeEventHandler<HTMLInputElement> = (e) => {
+    setSortType((e.currentTarget as HTMLInputElement).value);
   }
 
   const generateArr = () => {
@@ -44,6 +45,7 @@ export const SortingPage: React.FC = () => {
   }
 
   const sort = (type: 'asc' | 'desc') => {
+    setType(type)
     sortType === 'select' ?
     selectSort(type) :
     bubbleSort(type);
@@ -75,6 +77,7 @@ export const SortingPage: React.FC = () => {
     arr[0].state = ElementStates.Modified
     setArray([...arr]);
     setLoading(false);
+    setType('');
   }
 
   const selectSort = async (type: 'asc' | 'desc') => {
@@ -109,6 +112,7 @@ export const SortingPage: React.FC = () => {
     arr[0].state = ElementStates.Modified
     setArray([...arr]);
     setLoading(false);
+    setType('');
   }
 
   const swap = (index1: number, index2: number, arr: TArrItem[]) => {
@@ -122,8 +126,8 @@ export const SortingPage: React.FC = () => {
       <div className={styles.control}>
         <RadioInput disabled={loading} onChange={onChange} checked={'select' === sortType} value={'select'} label={'Выбор'} />
         <RadioInput disabled={loading} onChange={onChange} checked={'bubble' === sortType} value={'bubble'} label={'Пузырёк'} />
-        <Button text={'По возрастанию'} isLoader={loading} sorting={Direction.Ascending} onClick={() => {sort('asc')}}/>
-        <Button text={'По убыванию'} isLoader={loading} sorting={Direction.Descending} onClick={() => {sort('desc')}}/>
+        <Button isLoader={type === 'asc'} text={'По возрастанию'} disabled={loading} sorting={Direction.Ascending} onClick={() => {sort('asc')}}/>
+        <Button isLoader={type === 'desc'} text={'По убыванию'} disabled={loading} sorting={Direction.Descending} onClick={() => {sort('desc')}}/>
         <Button text={'Новый массив'} disabled={loading} onClick={generateArr}/>
       </div>
       <div className={styles.solution}>
