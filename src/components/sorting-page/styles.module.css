@@ -1,0 +1,18 @@
+.control {
+    margin: 0 auto 48px;
+    display: grid;
+    grid-template-columns: 123px 135px 217px 285px 205px;
+    align-items: center;
+    justify-items: flex-start;
+    width: fit-content;
+}
+
+.solution {
+    margin: 0 auto;
+    width: fit-content;
+    display: flex;
+    flex-direction: row;
+    align-items: flex-end;
+    height: auto;
+    gap: 10px;
+}
