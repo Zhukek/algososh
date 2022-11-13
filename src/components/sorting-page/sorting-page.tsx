@@ -7,6 +7,7 @@ import { Direction } from "../../types/direction";
 import { Column } from "../ui/column/column";
 import timeout from "../../services/timeout";
 import { ElementStates } from "../../types/element-states";
+import { bubbleSortByStep, selectSortSteps } from "./utils";
 
 type TArrItem = {
   number: number;
@@ -55,24 +56,26 @@ export const SortingPage: React.FC = () => {
     setLoading(true);
     let arr = resetArrState();
     setArray([...arr])
-    let i = arr.length - 1;
-    while (i > 0) {
-      for (let n = 0; n < i; n++) {
+    let i = 0;
+    while (i < arr.length - 1) {
+      for (let n = 0; n < arr.length - 1 - i; n++) {
         await timeout(200)
         arr[n].state = ElementStates.Changing;
         arr[n + 1].state = ElementStates.Changing;
         setArray([...arr]);
-        if (type === 'asc' ? arr[n].number > arr[n + 1].number : arr[n].number < arr[n + 1].number) {
-          await timeout(200)
-          swap(n, n + 1, arr)
-          setArray([...arr])
-        }
+        await timeout(200)
+        const numArray = bubbleSortByStep(type, array.map(item => item.number), i, n);
+        arr = arr.map((item, index) => ({
+          state: item.state,
+          number: numArray[index]
+        }))
+        setArray([...arr])
         await timeout(200)
         arr[n].state = ElementStates.Default;
       }
-      arr[i].state = ElementStates.Modified
+      i++
+      arr[arr.length - i].state = ElementStates.Modified
       setArray([...arr])
-      i--
     }
     arr[0].state = ElementStates.Modified
     setArray([...arr]);
@@ -82,11 +85,12 @@ export const SortingPage: React.FC = () => {
 
   const selectSort = async (type: 'asc' | 'desc') => {
     setLoading(true);
+    const result = selectSortSteps(type, [...array.map(item => item.number)])
     let arr = resetArrState();
     setArray([...arr])
     let i = 0;
     while (i < arr.length) {
-      let selected = i
+      let selected = i;
       arr[i].state = ElementStates.Changing;
       setArray([...arr]);
       for(let n = i + 1; n < arr.length; n++) {
@@ -104,7 +108,12 @@ export const SortingPage: React.FC = () => {
           setArray([...arr]);
         }
       }
-      swap(i, selected, arr);
+      await timeout(2000)
+      arr = arr.map((item, index) => ({
+        state: item.state,
+        number: result[i][index]
+      }))
+      arr[selected].state = ElementStates.Default;
       arr[i].state = ElementStates.Modified;
       setArray([...arr]);
       i++
@@ -113,12 +122,6 @@ export const SortingPage: React.FC = () => {
     setArray([...arr]);
     setLoading(false);
     setType('');
-  }
-
-  const swap = (index1: number, index2: number, arr: TArrItem[]) => {
-    const buffer = arr[index1];
-    arr[index1] = arr[index2];
-    arr[index2] = buffer;
   }
 
   return (

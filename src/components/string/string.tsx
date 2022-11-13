@@ -1,4 +1,4 @@
-import React, { SyntheticEvent, useState } from "react";
+import React, { useState } from "react";
 import styles from './styles.module.css';
 import { SolutionLayout } from "../ui/solution-layout/solution-layout";
 import { Input } from "../ui/input/input";
@@ -6,6 +6,7 @@ import { Button } from "../ui/button/button";
 import { Circle } from "../ui/circle/circle";
 import { ElementStates } from "../../types/element-states";
 import timeout from '../../services/timeout';
+import {reverseStringBySteps} from './utils';
 
 type TLetter = {
   letter: string;
@@ -29,6 +30,7 @@ export const StringComponent: React.FC = () => {
       state: ElementStates.Default
     }))
     setArray([...newArr]);
+    const result = reverseStringBySteps(value);
     const middle = Math.ceil(value.length / 2)
     for (let i = 0; i < middle; i++) {
       const changeElements = [i, value.length - 1 - i]
@@ -37,15 +39,10 @@ export const StringComponent: React.FC = () => {
       newArr[changeElements[1]].state = ElementStates.Changing;
       setArray([...newArr])
       await timeout(1000);
-      const buffer = newArr[changeElements[0]].letter;
-      newArr[changeElements[0]] = {
-        letter: newArr[changeElements[1]].letter,
-        state: ElementStates.Modified
-      };
-      newArr[changeElements[1]] = {
-        letter: buffer,
-        state: ElementStates.Modified
-      };
+      newArr = [...result[i].map((letter, index) => ({
+        letter: letter,
+        state: index <= changeElements[0] || index >= changeElements[1] ? ElementStates.Modified : ElementStates.Default
+      }))]
       setArray([...newArr])
     }
     setLoading(false)
@@ -58,7 +55,7 @@ export const StringComponent: React.FC = () => {
         <Button disabled={value === ''} isLoader={loading} type={'submit'} text={'Развернуть'}/>
         <p className={styles.sign}>Максимум — 11 символов</p>
       </form>
-      <div className={styles.solution}>
+      <div className={styles.solution} id='solution'>
         {
           array.map((item, index) => (
             <Circle state={item.state} letter={item.letter} key={index}/>

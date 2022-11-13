@@ -7,19 +7,19 @@ import styles from './styles.module.css';
 import timeout from '../../services/timeout';
 
 export const FibonacciPage: React.FC = () => {
-  const [value, setValue] = useState(0);
+  const [value, setValue] = useState('');
   const [loading, setLoading] = useState(false);
   const [array, setArray] = useState<number[]>([])
 
   const onChange: React.ChangeEventHandler<HTMLInputElement> = (e) => {
-    setValue(Number(e.currentTarget.value))
+    setValue(e.currentTarget.value)
   }
 
   const onSubmit: React.FormEventHandler<HTMLFormElement> =async (e) => {
     e.preventDefault();
     setLoading(true);
     setArray([])
-    const arr = getFibonacciNumbers(value);
+    const arr = getFibonacciNumbers(Number(value));
     for (let i = 0; i < arr.length; i++) {
       await timeout(500)
       setArray(v => [...v,arr[i]])
@@ -46,10 +46,10 @@ export const FibonacciPage: React.FC = () => {
     <SolutionLayout title="Последовательность Фибоначчи">
       <form onSubmit={onSubmit} className={styles.wrapper}>
         <Input max={19} type="number" value={value} onChange={onChange}/>
-        <Button disabled={value === 0 || value > 19} isLoader={loading} type={'submit'} text={'Развернуть'}/>
+        <Button disabled={Number(value) <= 0 || Number(value) > 19} isLoader={loading} type={'submit'} text={'Развернуть'}/>
         <p className={styles.sign}>Максимальное число — 19</p>
       </form>
-      <div className={styles.solution}>
+      <div className={styles.solution} id='solution'>
         {
           array.map((element, index) => (
             <Circle index={index} letter={`${element}`} key={index}/>
