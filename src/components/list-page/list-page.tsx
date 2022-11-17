@@ -193,19 +193,19 @@ export const ListPage: React.FC = () => {
     <SolutionLayout title="Связный список">
       <div className={styles.controll}>
         <Input disabled={loading} type="text" isLimitText={true} value={value} id='text' onChange={onChange} maxLength={4}/>
-        <Button isLoader={action === 'prepend'} onClick={prepend} disabled={loading || value === ''} text="Добавить в head"/>
-        <Button isLoader={action === 'append'} onClick={append} disabled={loading || value === ''} text="Добавить в tail"/>
-        <Button isLoader={action === 'deleteHead'} onClick={deleteHead} disabled={loading || array.length === 0} text="Удалить из head"/>
-        <Button isLoader={action === 'deleteTail'} onClick={deleteTail} disabled={loading || array.length === 0} text="Удалить из tail"/>
+        <Button id="prepend" isLoader={action === 'prepend'} onClick={prepend} disabled={loading || value === ''} text="Добавить в head"/>
+        <Button id="append" isLoader={action === 'append'} onClick={append} disabled={loading || value === ''} text="Добавить в tail"/>
+        <Button id="deleteHead" isLoader={action === 'deleteHead'} onClick={deleteHead} disabled={loading || array.length === 0} text="Удалить из head"/>
+        <Button id="deleteTail" isLoader={action === 'deleteTail'} onClick={deleteTail} disabled={loading || array.length === 0} text="Удалить из tail"/>
         <Input disabled={loading} type="number" id="index" value={index} onChange={onChange}/>
-        <Button isLoader={action === 'addByIndex'} onClick={addByIndex} disabled={
+        <Button id="addByIndex" isLoader={action === 'addByIndex'} onClick={addByIndex} disabled={
           loading || value === '' || index === '' || Number(index) < 0 || Number(index) > array.length
         } extraClass={styles.longButton_left} text="Добавить по индексу"/>
-        <Button isLoader={action === 'deleteByIndex'} onClick={deleteByIndex} disabled={
+        <Button id="deleteByIndex" isLoader={action === 'deleteByIndex'} onClick={deleteByIndex} disabled={
             loading || index === '' || array.length === 0 || Number(index) < 0 || Number(index) >= array.length
           } extraClass={styles.longButton_right} text="Удалить по индексу"/>
       </div>
-      <div className={styles.solution}>
+      <div className={styles.solution} id="solution">
         {
           array.map((item, index) => (
             <div className={styles.wrapper} key={index}>

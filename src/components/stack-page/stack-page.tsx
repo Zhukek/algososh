@@ -72,10 +72,10 @@ export const StackPage: React.FC = () => {
       <form onSubmit={onSubmit} className={styles.contols}>
         <Input type="text" isLimitText={true} value={value} onChange={onChange} maxLength={4}/>
         <Button isLoader={action === 'add'} disabled={loading || value === ''} type={'submit'} text="Добавить"/>
-        <Button isLoader={action === 'pop'} disabled={loading || stack.getSize() === 0} onClick={pop} type={'button'} text="Удалить"/>
-        <Button disabled={loading || stack.getSize() === 0} onClick={clearAll} type={'button'} text="Очистить"/>
+        <Button isLoader={action === 'pop'} disabled={loading || stack.getSize() === 0} onClick={pop} type={'button'} text="Удалить" id="delete"/>
+        <Button disabled={loading || stack.getSize() === 0} onClick={clearAll} type={'button'} text="Очистить" id="clear"/>
       </form>
-      <ul className={styles.result}>
+      <ul className={styles.result} id='solution'>
       {
         stackValues.map((item, index) => (
           <Circle state={item.state} letter={item.text} key={index} index={index} head={index === stackValues.length - 1 ? 'top' : ''}/>
