@@ -1,5 +1,4 @@
 # Проектная работа. МБОУ АЛГОСОШ им. Фибоначчи
-![preview](README_static/preview.png)
 
 В проектной работе был написан визуализатор алгоритмов. Эта проектная работа заточена на анимацию и поэтапное отображение работы алгоритма, что позволит вам детальнее понять каждый шаг его работы.
 
@@ -30,11 +29,6 @@
 
 ## Дизайн проекта:
 * [Figma](https://www.figma.com/file/RIkypcTQN5d37g7RRTFid0/Algososh_external_link?node-id=0%3A1) 
-
-## Посмотреть проект
-
-* Посмотреть проект можно тут &emsp; [&rsaquo; клик &lsaquo;](https://andreikolosov.github.io/algososh/)
-
 
 ### Автор
 * Жук Иван - [Telegram ](https://t.me/ZhuIvan)
